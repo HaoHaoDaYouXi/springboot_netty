@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration >
+    <!-- 级别，按照从低到高为：ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF。-->
+    <!-- All:最低等级的，用于打开所有日志记录. -->
+    <!-- Trace:是追踪，就是程序推进一下. -->
+    <!-- Debug:指出细粒度信息事件对调试应用程序是非常有帮助的. -->
+    <!-- Info:消息在粗粒度级别上突出强调应用程序的运行过程. -->
+    <!-- Warn:输出警告及warn以下级别的日志. -->
+    <!-- Error:输出错误信息日志. -->
+    <!-- Fatal:输出每个严重的错误事件将会导致应用程序的退出的日志. -->
+    <!-- OFF:最高等级的，用于关闭所有日志记录.-->
+    <!-- 程序会打印高于或等于所设置级别的日志，设置的日志等级越高，打印出来的日志就越少。 -->
+    <contextName>logback</contextName>
+    <!--控制台日志格式：彩色日志-->
+    <!-- magenta:洋红 boldMagenta:粗红 green:绿色 boldGreen:深绿色 cyan:青色 white:白色 -->
+    <property name="pattern"
+              value="%yellow(%d{yyyy-MM-dd HH:mm:ss.SSS})|%contextName|%highlight(%-5level)|%blue(%thread)| %boldGreen(%logger{36}:%L) >>>>>> %magenta(%msg) %n"/>
+    <!-- 活动文件的大小 -->
+    <property name="max.file.size" value="100MB"/>
+    <!-- 保留的归档文件的最大数量 -->
+    <property name="max.history" value="7"/>
+    <!-- 控制所有归档日志文件的总大小 -->
+    <property name="total.size.cap" value="10GB"/>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>utf-8</charset>
+            <Pattern>${pattern}</Pattern>
+        </encoder>
+    </appender>
+
+    <!--阈值过滤，debug 配置-->
+    <appender name="debug-ThresholdFilter" class="ch.qos.logback.core.rolling.RollingFileAppender" immediateFlush="true">
+        <file>./logs/debug.log</file>
+        <!--是否立即刷新磁盘 默认cache 8k-->
+        <!-- <ImmediateFlush>true</ImmediateFlush> -->
+        <!-- 循环政策：基于时间创建日志文件 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件名格式 -->
+            <fileNamePattern>./logs/%d{yyyyMMdd}/debug.log.%d{yyyyMMdd}.%i</fileNamePattern>
+            <!-- 日志最大的历史 30天 -->
+            <maxHistory>${max.history}</maxHistory>
+            <!--单个日志文件的最大体积-->
+            <maxFileSize>${max.file.size}</maxFileSize>
+            <!--控制所有归档日志文件的总大小-->
+            <totalSizeCap>${total.size.cap}</totalSizeCap>
+            <!--是否在应用启动的时候删除历史日志-->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <!-- 按照阈值过滤，只要debug和以下的都打印-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <charset>utf-8</charset>
+            <Pattern>${pattern}</Pattern>
+        </encoder>
+    </appender>
+    <!--阈值过滤，error 配置-->
+    <appender name="error-ThresholdFilter" class="ch.qos.logback.core.rolling.RollingFileAppender" immediateFlush="true">
+        <file>./logs/error.log</file>
+        <!--是否立即刷新磁盘 默认cache 8k-->
+        <!-- <ImmediateFlush>true</ImmediateFlush> -->
+        <!-- 循环政策：基于时间创建日志文件 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件名格式 -->
+            <fileNamePattern>./logs/%d{yyyyMMdd}/error.log.%d{yyyyMMdd}.%i</fileNamePattern>
+            <!-- 日志最大的历史 30天 -->
+            <maxHistory>${max.history}</maxHistory>
+            <!--单个日志文件的最大体积-->
+            <maxFileSize>${max.file.size}</maxFileSize>
+            <!--控制所有归档日志文件的总大小-->
+            <totalSizeCap>${total.size.cap}</totalSizeCap>
+            <!--是否在应用启动的时候删除历史日志-->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <!-- 按照阈值过滤，只要debug和以下的都打印-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <charset>utf-8</charset>
+            <Pattern>${pattern}</Pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="Console" />
+        <appender-ref ref="debug-ThresholdFilter" />
+        <appender-ref ref="error-ThresholdFilter" />
+    </root>
+
+</configuration>
